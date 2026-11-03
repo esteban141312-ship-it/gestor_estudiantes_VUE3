@@ -1,0 +1,130 @@
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 15px;
+    color: #333;
+}
+
+.contenedor {
+    max-width: 900px;
+    margin: auto;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+.seccion {
+    background-color: white;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+label {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+input,
+select {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+}
+
+button {
+    padding: 8px 12px;
+    margin: 5px;
+    background-color: #e0e0e0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #d5d5d5;
+}
+
+button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.error {
+    color: #c62828;
+    font-size: 14px;
+}
+
+.verde {
+    color: #388e3c;
+}
+
+.naranja {
+    color: #c77700;
+}
+
+.rojo {
+    color: #c62828;
+}
+
+.activo {
+    background-color: #555;
+    color: white;
+}
+
+.estudiante {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fafafa;
+}
+
+.estudiante h3 {
+    margin-top: 0;
+}
+
+.botones-estudiante {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.botones-filtro {
+    margin-top: 10px;
+}
+
+.borrar-todo {
+    background-color: #c62828;
+    color: white;
+    border: none;
+    margin-top: 10px;
+}
+
+.borrar-todo:hover {
+    background-color: #a51d1d;
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+
+    .estudiante {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+

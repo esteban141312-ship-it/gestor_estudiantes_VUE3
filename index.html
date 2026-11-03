@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor de estudiantes</title>
+
+    <link rel="stylesheet" href="styles.css">
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+
+    <div id="app" class="contenedor">
+
+        <h1>Gestor de estudiantes</h1>
+
+        <p>
+            Registra estudiantes, administra sus calificaciones y filtra
+            la lista por carrera, nombre o estado académico.
+        </p>
+
+        <!-- Resumen -->
+        <section class="seccion">
+            <h2>Resumen del grupo</h2>
+
+            <p>Total de estudiantes: {{ estudiantes.length }}</p>
+
+            <p :class="{ rojo: promedio() < 6 }">
+                Promedio: {{ promedio().toFixed(1) }}
+            </p>
+
+            <p>Aprobados: {{ contarAprobados() }}</p>
+
+            <p>Reprobados: {{ contarReprobados() }}</p>
+
+            <p v-if="estudiantes.length > 0">
+                Mejor calificación: {{ mejorEstudiante().nombre }}
+                ({{ mejorEstudiante().calificacion }})
+            </p>
+
+            <p v-else>
+                Mejor calificación: No hay estudiantes
+            </p>
+
+            <p>
+                Mostrando {{ estudiantesFiltrados().length }}
+                de {{ estudiantes.length }} estudiantes
+            </p>
+        </section>
+
+        <!-- Formulario -->
+        <section class="seccion">
+            <h2>Agregar estudiante</h2>
+
+            <form @submit.prevent="agregarEstudiante">
+
+                <label for="nombre">Nombre:</label>
+
+                <input
+                    id="nombre"
+                    type="text"
+                    v-model.trim="nombre"
+                    placeholder="Nombre del estudiante"
+                >
+
+                <p class="error" v-if="errorNombre()">
+                    {{ errorNombre() }}
+                </p>
+
+                <label for="carrera">Carrera:</label>
+
+                <select id="carrera" v-model="carrera">
+                    <option value="">Seleccione una carrera</option>
+
+                    <option
+                        v-for="car in carreras"
+                        :key="car"
+                        :value="car"
+                    >
+                        {{ car }}
+                    </option>
+                </select>
+
+                <p class="error" v-if="errorCarrera()">
+                    {{ errorCarrera() }}
+                </p>
+
+                <label for="calificacion">Calificación:</label>
+
+                <input
+                    id="calificacion"
+                    type="number"
+                    v-model.number="calificacion"
+                    min="0"
+                    max="10"
+                    step="1"
+                >
+
+                <p class="error" v-if="errorCalificacion()">
+                    {{ errorCalificacion() }}
+                </p>
+
+                <p class="error" v-if="esDuplicado()">
+                    Ese estudiante ya existe
+                </p>
+
+                <p class="error" v-if="estudiantes.length >= cupoMaximo">
+                    El cupo máximo de estudiantes está completo
+                </p>
+
+                <button type="submit" :disabled="!formularioValido()">
+                    Agregar estudiante
+                </button>
+
+                <span>Quedan {{ cupoMaximo - estudiantes.length }} lugares</span>
+
+            </form>
+        </section>
+
+        <!-- Filtros -->
+        <section class="seccion">
+            <h2>Filtros</h2>
+
+            <label for="filtroCarrera">Filtrar por carrera:</label>
+
+            <select id="filtroCarrera" v-model="filtroCarrera">
+                <option value="Todas">Todas</option>
+
+                <option
+                    v-for="car in carreras"
+                    :key="car"
+                    :value="car"
+                >
+                    {{ car }}
+                </option>
+            </select>
+
+            <label for="busqueda">Buscar por nombre:</label>
+
+            <input
+                id="busqueda"
+                type="text"
+                v-model="busqueda"
+                placeholder="Escriba un nombre"
+            >
+
+            <div class="botones-filtro">
+
+                <button
+                    type="button"
+                    @click="filtroEstado = 'todos'"
+                    :class="{ activo: filtroEstado === 'todos' }"
+                >
+                    Todos
+                </button>
+
+                <button
+                    type="button"
+                    @click="filtroEstado = 'aprobados'"
+                    :class="{ activo: filtroEstado === 'aprobados' }"
+                >
+                    Aprobados
+                </button>
+
+                <button
+                    type="button"
+                    @click="filtroEstado = 'reprobados'"
+                    :class="{ activo: filtroEstado === 'reprobados' }"
+                >
+                    Reprobados
+                </button>
+
+            </div>
+        </section>
+
+        <!-- Lista -->
+        <section class="seccion">
+            <h2>Lista de estudiantes</h2>
+
+            <p v-if="estudiantes.length === 0">
+                Aún no hay estudiantes
+            </p>
+
+            <p v-else-if="estudiantesFiltrados().length === 0">
+                No hay estudiantes con esos filtros
+            </p>
+
+            <div v-else>
+
+                <div
+                    class="estudiante"
+                    v-for="est in estudiantesFiltrados()"
+                    :key="est.id"
+                >
+
+                    <div>
+                        <h3>
+                            {{ est.nombre }}
+                            <span v-if="est.calificacion === 10">⭐</span>
+                        </h3>
+
+                        <p>Carrera: {{ est.carrera }}</p>
+
+                        <p :class="colorNota(est.calificacion)">
+                            Calificación: {{ est.calificacion }}
+                        </p>
+                    </div>
+
+                    <div class="botones-estudiante">
+
+                        <button
+                            type="button"
+                            @click="bajarCalificacion(est)"
+                            :disabled="est.calificacion <= 0"
+                        >
+                            -1
+                        </button>
+
+                        <button
+                            type="button"
+                            @click="subirCalificacion(est)"
+                            :disabled="est.calificacion >= 10"
+                        >
+                            +1
+                        </button>
+
+                        <button
+                            type="button"
+                            @click="eliminarEstudiante(est.id)"
+                        >
+                            Eliminar
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <button
+                type="button"
+                class="borrar-todo"
+                v-show="estudiantes.length > 0"
+                :disabled="estudiantes.length === 0"
+                @click="borrarTodo"
+            >
+                Borrar todo
+            </button>
+
+        </section>
+
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
