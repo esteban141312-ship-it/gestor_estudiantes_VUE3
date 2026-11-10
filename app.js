@@ -23,7 +23,7 @@ const app = Vue.createApp({
         };
     },
 
-    methods: {
+    computed: {
 
         // Validar el nombre
         errorNombre() {
@@ -69,69 +69,12 @@ const app = Vue.createApp({
         // Comprobar si el formulario es válido
         formularioValido() {
             return (
-                this.errorNombre() === "" &&
-                this.errorCarrera() === "" &&
-                this.errorCalificacion() === "" &&
-                !this.esDuplicado() &&
+                this.errorNombre === "" &&
+                this.errorCarrera === "" &&
+                this.errorCalificacion === "" &&
+                !this.esDuplicado &&
                 this.estudiantes.length < this.cupoMaximo
             );
-        },
-
-        // Agregar un estudiante
-        agregarEstudiante() {
-
-            if (!this.formularioValido()) {
-                return;
-            }
-
-            const estudiante = {
-                id: this.siguienteId,
-                nombre: this.nombre,
-                carrera: this.carrera,
-                calificacion: this.calificacion
-            };
-
-            this.estudiantes.push(estudiante);
-
-            this.siguienteId++;
-
-            this.nombre = "";
-            this.carrera = "";
-            this.calificacion = null;
-        },
-
-        // Eliminar un estudiante
-        eliminarEstudiante(id) {
-            this.estudiantes = this.estudiantes.filter(est =>
-                est.id !== id
-            );
-        },
-
-        // Subir la calificación en un punto
-        subirCalificacion(est) {
-            if (est.calificacion < 10) {
-                est.calificacion++;
-            }
-        },
-
-        // Bajar la calificación en un punto
-        bajarCalificacion(est) {
-            if (est.calificacion > 0) {
-                est.calificacion--;
-            }
-        },
-
-        // Obtener el color de la calificación
-        colorNota(nota) {
-            if (nota >= 6) {
-                return "verde";
-            }
-
-            if (nota >= 4) {
-                return "naranja";
-            }
-
-            return "rojo";
         },
 
         // Filtrar estudiantes por carrera, nombre y estado
@@ -196,13 +139,78 @@ const app = Vue.createApp({
 
         // Encontrar al estudiante con la nota más alta
         mejorEstudiante() {
+            if (this.estudiantes.length === 0) {
+                return null;
+            }
+
             return this.estudiantes.reduce((mejor, est) => {
                 if (est.calificacion > mejor.calificacion) {
                     return est;
                 }
 
                 return mejor;
-            }, this.estudiantes[0]);
+            });
+        }
+
+    },
+
+    methods: {
+
+        // Agregar un estudiante
+        agregarEstudiante() {
+
+            if (!this.formularioValido) {
+                return;
+            }
+
+            const estudiante = {
+                id: this.siguienteId,
+                nombre: this.nombre,
+                carrera: this.carrera,
+                calificacion: this.calificacion
+            };
+
+            this.estudiantes.push(estudiante);
+
+            this.siguienteId++;
+
+            this.nombre = "";
+            this.carrera = "";
+            this.calificacion = null;
+        },
+
+        // Eliminar un estudiante
+        eliminarEstudiante(id) {
+            this.estudiantes = this.estudiantes.filter(est =>
+                est.id !== id
+            );
+        },
+
+        // Subir la calificación en un punto
+        subirCalificacion(est) {
+            if (est.calificacion < 10) {
+                est.calificacion++;
+            }
+        },
+
+        // Bajar la calificación en un punto
+        bajarCalificacion(est) {
+            if (est.calificacion > 0) {
+                est.calificacion--;
+            }
+        },
+
+        // Obtener el color de la calificación
+        colorNota(nota) {
+            if (nota >= 6) {
+                return "verde";
+            }
+
+            if (nota >= 4) {
+                return "naranja";
+            }
+
+            return "rojo";
         },
 
         // Borrar todos los estudiantes

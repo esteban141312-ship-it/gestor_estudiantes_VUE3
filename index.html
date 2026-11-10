@@ -20,23 +20,23 @@
             la lista por carrera, nombre o estado académico.
         </p>
 
-        <!-- Resumen -->
+        
         <section class="seccion">
             <h2>Resumen del grupo</h2>
 
             <p>Total de estudiantes: {{ estudiantes.length }}</p>
 
-            <p :class="{ rojo: promedio() < 6 }">
-                Promedio: {{ promedio().toFixed(1) }}
+            <p :class="{ rojo: promedio < 6 }">
+                Promedio: {{ promedio.toFixed(1) }}
             </p>
 
-            <p>Aprobados: {{ contarAprobados() }}</p>
+            <p>Aprobados: {{ contarAprobados }}</p>
 
-            <p>Reprobados: {{ contarReprobados() }}</p>
+            <p>Reprobados: {{ contarReprobados }}</p>
 
             <p v-if="estudiantes.length > 0">
-                Mejor calificación: {{ mejorEstudiante().nombre }}
-                ({{ mejorEstudiante().calificacion }})
+                Mejor calificación: {{ mejorEstudiante.nombre }}
+                ({{ mejorEstudiante.calificacion }})
             </p>
 
             <p v-else>
@@ -44,12 +44,12 @@
             </p>
 
             <p>
-                Mostrando {{ estudiantesFiltrados().length }}
+                Mostrando {{ estudiantesFiltrados.length }}
                 de {{ estudiantes.length }} estudiantes
             </p>
         </section>
 
-        <!-- Formulario -->
+        
         <section class="seccion">
             <h2>Agregar estudiante</h2>
 
@@ -64,8 +64,8 @@
                     placeholder="Nombre del estudiante"
                 >
 
-                <p class="error" v-if="errorNombre()">
-                    {{ errorNombre() }}
+                <p class="error" v-if="errorNombre">
+                    {{ errorNombre }}
                 </p>
 
                 <label for="carrera">Carrera:</label>
@@ -82,8 +82,8 @@
                     </option>
                 </select>
 
-                <p class="error" v-if="errorCarrera()">
-                    {{ errorCarrera() }}
+                <p class="error" v-if="errorCarrera">
+                    {{ errorCarrera }}
                 </p>
 
                 <label for="calificacion">Calificación:</label>
@@ -97,11 +97,11 @@
                     step="1"
                 >
 
-                <p class="error" v-if="errorCalificacion()">
-                    {{ errorCalificacion() }}
+                <p class="error" v-if="errorCalificacion">
+                    {{ errorCalificacion }}
                 </p>
 
-                <p class="error" v-if="esDuplicado()">
+                <p class="error" v-if="esDuplicado">
                     Ese estudiante ya existe
                 </p>
 
@@ -109,7 +109,7 @@
                     El cupo máximo de estudiantes está completo
                 </p>
 
-                <button type="submit" :disabled="!formularioValido()">
+                <button type="submit" :disabled="!formularioValido">
                     Agregar estudiante
                 </button>
 
@@ -182,7 +182,7 @@
                 Aún no hay estudiantes
             </p>
 
-            <p v-else-if="estudiantesFiltrados().length === 0">
+            <p v-else-if="estudiantesFiltrados.length === 0">
                 No hay estudiantes con esos filtros
             </p>
 
@@ -190,7 +190,7 @@
 
                 <div
                     class="estudiante"
-                    v-for="est in estudiantesFiltrados()"
+                    v-for="est in estudiantesFiltrados"
                     :key="est.id"
                 >
 
